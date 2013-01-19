@@ -1,6 +1,6 @@
-var KlassTests = Klass({
+var KlassTests = Klass(unittest.Suite)({
 	'test_simple': function(self){
-		var C = Klass({
+		var C = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			},
@@ -16,39 +16,39 @@ var KlassTests = Klass({
 		self.assertEqual(b.greeting(), 'Hi b');
 	},
 	'test_simple_inheritance': function(self){
-		var Base = Klass({
+		var Base = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			}
 		});
-		var C = Klass({
+		var C = Klass(Base)({
 			'greeting': function(self){
 				return 'Hi ' + self.name;
 			}
-		}, Base);
+		});
 		var a = C('a');
 		self.assertEqual(a.name, 'a');
 		self.assertEqual(a.greeting(), 'Hi a');
 	},
 	'test_super': function(self){
-		var Base = Klass({
+		var Base = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			}
 		});
-		var C = Klass({
+		var C = Klass(Base)({
 			'__init__': function(self, name){
 				self.$uper('__init__')(name);
 				self.name = 'Super ' + self.name;
 			}
-		}, Base);
+		});
 		var a  = Base('a');
 		self.assertEqual(a.name, 'a');
 		var b  = C('b');
 		self.assertEqual(b.name, 'Super b');
 	},
 	'test_multi_inheritance_siblings': function(self){
-		var BaseA = Klass({
+		var BaseA = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			},
@@ -56,7 +56,7 @@ var KlassTests = Klass({
 				return 'Hi ' + self.name;
 			}
 		});
-		var BaseB = Klass({
+		var BaseB = Klass()({
 			'__init__': function(self, name){
 				sefl.name = name;
 			},
@@ -64,13 +64,13 @@ var KlassTests = Klass({
 				return 'Goodbye ' + self.name;
 			}
 		});
-		var C = Klass({}, BaseA, BaseB);
+		var C = Klass(BaseA, BaseB)({});
 		var a = C('a');
 		self.assertEqual(a.greeting(), 'Hi a');
 		self.assertEqual(a.goodbye(), 'Goodbye a');
 	},
 	'test_mro_one_level': function(self){
-		var BaseA = Klass({
+		var BaseA = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			},
@@ -78,7 +78,7 @@ var KlassTests = Klass({
 				return 'Hi ' + self.name;
 			}
 		});
-		var BaseB = Klass({
+		var BaseB = Klass()({
 			'__init__': function(self, name){
 				sefl.name = name;
 			},
@@ -86,17 +86,17 @@ var KlassTests = Klass({
 				return 'Hello ' + self.name;
 			}
 		});
-		var C = Klass({}, BaseA, BaseB);
+		var C = Klass(BaseA, BaseB)({});
 		var a = C('a');
 		self.assertEqual(a.greeting(), 'Hi a');
 	},
 	'test_foreign_class_method_calling': function(self){
-		var Greeter = Klass({
+		var Greeter = Klass()({
 			'greeting': function(self){
 				return 'Hi ' + self.name;
 			}
 		});
-		var Named = Klass({
+		var Named = Klass()({
 			'__init__': function(self, name){
 				self.name = name;
 			}
@@ -104,5 +104,5 @@ var KlassTests = Klass({
 		var instance = Named('a');
 		self.assertEqual(Greeter.greeting(instance), 'Hi a');
 	}
-}, unittest.Suite);
+});
 unittest.run(KlassTests);

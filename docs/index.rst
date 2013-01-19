@@ -25,15 +25,16 @@ Usage
 Create a new class
 ==================
 
-Classes are created by calling :js:func:`Klass`, which takes an object of
-attributes and methods as first argument, and optionally any number of
-parent classes as extra arguments.
+Classes are created by calling :js:func:`Klass`, which optionally takes any
+number of parents as arguments and returns a function to define your class.
+That function can be called with an object of attributes and methods to be
+defined on your class.
 
 Whenever a class is initialized, the ``__init__`` method is called.
 
 A simple class can be created like this::
 
-    var Animal = Klass({
+    var Animal = Klass()({
         '__init___': function(self, name){
             self.name = name;
         }
@@ -49,17 +50,17 @@ Creating subclasses
 
 Now let's make a few different animals, and give each of them a speak method::
 
-    var Cat = Klass({
+    var Cat = Klass(Animal)({
         'speak': function(self){
             console.log(self.name + ' says: Nyan~');
         }
-    }, Animal);
+    });
 
-    var Fish = Klass({
+    var Fish = Klass(Animal){
         'speak': function(self){
             console.log(self.name + ' says: Blubb');
         }
-    }, Animal);
+    });
 
 Those two classes both inherit ``Animal`` and re-use it's ``__init__`` method.
 
@@ -81,7 +82,7 @@ classes your instance has.
 
 A silly example could be::
 
-    var Counter = Klass({
+    var Counter = Klass()({
         '__init__': function(self){
             self.value = 0;
         },
@@ -89,12 +90,12 @@ A silly example could be::
             self.value++;
         }
     });
-    var DoubleCounter = Klass({
+    var DoubleCounter = Klass(Counter)({
         'increment': function(self){
             self.$uper('increment')();
             self.$uper('increment')();
         }
-    }, Counter);
+    });
 
 In this example, ``DoubleCounter`` just calls the ``increment`` method on its
 parent class twice when ``increment`` is called.
@@ -125,12 +126,10 @@ Using them using the ``Animal``, ``Fish`` and ``Cat`` example from above::
 Reference
 *********
 
-.. js:function:: Klass(attrs, [parent, ...])
+.. js:function:: Klass([parent, ...])
 
-    Creates a new class (constructor). attrs is an object which can contai
-    attributes and methods for the class.
-
-    All further attributes are the parent classes of the newly created class.
+    Returns a function to define your class. That function takes an object of
+    attributes and methods for the class and returns a the class constructor.
 
     If the class constructor is invoked, it returns a new instance of that
     class. Instances have two special methods: ``__init__`` which is called

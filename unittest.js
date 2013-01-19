@@ -23,7 +23,7 @@ var unittest = (function(){
     };
     api.AssertionError.prototype = new Error();
     api.AssertionError.prototype.constructor = api.AssertionError;
-    api.Suite = Klass({
+    api.Suite = Klass()({
 		'fail': function(self, message){
 			throw new api.AssertionError(message);
 		},

@@ -69,37 +69,36 @@ var Klass = (function(){
 			self.__init__ = self.$uper('__init__') || function(){};
 		}
 	};
-	var api = function(attrs){
-		// returns a new klass with given attrs and parents
-
-		var parents = [];
-		// this loop starts at 1 on purpose, as arguments[0] is 'attrs'
-		for (var i = 1, l = arguments.length; i < l; i++){
-			parents.push(arguments[i]);
-		}
-		attrs = attrs || {};
-		var klass = function(){
-			var self = {};
-			map_attrs(self, attrs, parents);
-			self.__klass__ = klass;
-			self.__init__.apply(this, arguments);
-			return self;
-		};
-		// add "classmethods" (methods that need to be called explicitly with an instance
-		for (var attr in attrs){
-			if (attrs.hasOwnProperty(attr)){
-				klass[attr] = attrs[attr];
+	var api = function(){
+		var parents = Array.prototype.slice.call(arguments);
+		function classdef(attrs){
+			// returns a new klass with given attrs and parents
+			attrs = attrs || {};
+			var klass = function(){
+				var self = {};
+				map_attrs(self, attrs, parents);
+				self.__klass__ = klass;
+				self.__init__.apply(this, arguments);
+				return self;
+			};
+			// add "classmethods" (methods that need to be called explicitly with an instance
+			for (var attr in attrs){
+				if (attrs.hasOwnProperty(attr)){
+					klass[attr] = attrs[attr];
+				}
 			}
+			klass.__id__ = ++counter;
+			klass.__parents__ = parents;
+			children[klass.__id__] = [];
+			for (var i=0, l=parents.length; i<l; i++){
+				children[parents[i].__id__].push(klass);
+			}
+			cache[klass.__id__] = attrs;
+			return klass;
 		}
-		klass.__id__ = ++counter;
-		klass.__parents__ = parents;
-		children[klass.__id__] = [];
-		for (var i=0, l=parents.length; i<l; i++){
-			children[parents[i].__id__].push(klass);
-		}
-		cache[klass.__id__] = attrs;
-		return klass;
+		return classdef;
 	};
+
 	api.isinstance = function(instance, klass){
 		// checks if an instance is an instance of the given klass or any of its parent klasses.
 		if (!instance.__klass__){
