@@ -33,12 +33,14 @@ var Klass = (function(){
 	var map_attrs = function(self, attrs, parents){
 		// map given attributes onto the 'self' object.
 		// map main attrs
+		var value;
 		for (var attr in attrs){
 			if (attrs.hasOwnProperty(attr)){
-				if (typeof attrs[attr] === 'function'){
-					self[attr] = proxy(self, attrs[attr]);
+				value = attrs[attr]
+				if (typeof value === 'function' && !value.__id__){
+					self[attr] = proxy(self, value);
 				} else {
-					self[attr] = attrs[attr];
+					self[attr] = value;
 				}
 			}
 		}
@@ -47,22 +49,23 @@ var Klass = (function(){
 			var parent = cache[parents[i].__id__];
 			for (var attr in parent){
 				if (parent.hasOwnProperty(attr) && !self.hasOwnProperty(attr)){
-					if (typeof parent[attr] === 'function'){
-						self[attr] = proxy(self, parent[attr]);
+					value = parent[attr]
+					if (typeof value === 'function' && !value.id){
+						self[attr] = proxy(self, value);
 					} else {
-						self[attr] = parent[attr];
+						self[attr] = value;
 					}
 				}
 			}
 		}
 		// map $super
 		self.$uper = function(name){
-            var method = find_method(name, parents);
-            if (method){
-                return proxy(self, method);
-            } else {
-                return null;
-            }
+			var method = find_method(name, parents);
+			if (method){
+				return proxy(self, method);
+			} else {
+				return null;
+			}
 		};
 		// ensure __init__
 		if (!self.hasOwnProperty('__init__')){
@@ -126,6 +129,6 @@ var Klass = (function(){
 			}
 		}
 		return false;
-	}
+	};
 	return api;
 })();

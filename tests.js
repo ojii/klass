@@ -103,6 +103,21 @@ var KlassTests = Klass(unittest.Suite)({
 		});
 		var instance = Named('a');
 		self.assertEqual(Greeter.greeting(instance), 'Hi a');
+	},
+	'test_class_inside_class': function(self){
+		var Base = Klass()({
+			'Inner': Klass()({
+				'method': function(self){
+					return 1;
+				}
+			}),
+			'method': function(self, inner){
+				return inner.method();
+			}
+		});
+		var instance = Base();
+		var inner = Base.Inner();
+		self.assertEqual(instance.method(inner), 1);
 	}
 });
 unittest.run(KlassTests);
