@@ -58,7 +58,7 @@ var KlassTests = Klass(unittest.Suite)({
 		});
 		var BaseB = Klass()({
 			'__init__': function(self, name){
-				sefl.name = name;
+				self.name = name;
 			},
 			'goodbye': function(self){
 				return 'Goodbye ' + self.name;
@@ -80,7 +80,7 @@ var KlassTests = Klass(unittest.Suite)({
 		});
 		var BaseB = Klass()({
 			'__init__': function(self, name){
-				sefl.name = name;
+				self.name = name;
 			},
 			'greeting': function(self){
 				return 'Hello ' + self.name;
